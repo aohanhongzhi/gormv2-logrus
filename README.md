@@ -58,3 +58,11 @@ You can also add customization options :
 ## Contibuting
 
 Just feel free to open issues, ask questions, make proposals.
+
+
+# 发布
+
+```
+git tag v0.0.2
+git push --tags 
+```
