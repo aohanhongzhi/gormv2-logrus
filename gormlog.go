@@ -127,7 +127,7 @@ func (gl *Gormlog) Trace(ctx context.Context, begin time.Time, fc func() (string
 			logrusFields[logrus.ErrorKey] = err
 
 			if gl.opts.lr != nil {
-				if logrusFields["rows"] == 0 && err.Error() == "record not found" {
+				if logrusFields["rows"] == 0 && errors.Is(err, gorm.ErrRecordNotFound) {
 					gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Debugf("%s", traceLog)
 				} else {
 					gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Errorf("%s", traceLog)
