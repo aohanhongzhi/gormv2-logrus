@@ -127,7 +127,11 @@ func (gl *Gormlog) Trace(ctx context.Context, begin time.Time, fc func() (string
 			logrusFields[logrus.ErrorKey] = err
 
 			if gl.opts.lr != nil {
-				gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Errorf("%s", traceLog)
+				if logrusFields["rows"] == 0 && err.Error() == "record not found" {
+					gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Debugf("%s", traceLog)
+				} else {
+					gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Errorf("%s", traceLog)
+				}
 			}
 
 			if gl.opts.logrusEntry != nil {
@@ -155,13 +159,16 @@ func (gl *Gormlog) Trace(ctx context.Context, begin time.Time, fc func() (string
 		return
 	}
 
-	// Use directly with logrus entry
-	if gl.opts.lr != nil {
-		gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Debugf("%s", traceLog)
-	}
+	if err == nil {
 
-	// Use with logrusEntry
-	if gl.opts.logrusEntry != nil {
-		gl.opts.logrusEntry.WithContext(ctx).WithFields(logrusFields).Debugf("%s", traceLog)
+		// Use directly with logrus entry
+		if gl.opts.lr != nil {
+			gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Debugf("%s", traceLog)
+		}
+
+		// Use with logrusEntry
+		if gl.opts.logrusEntry != nil {
+			gl.opts.logrusEntry.WithContext(ctx).WithFields(logrusFields).Debugf("%s", traceLog)
+		}
 	}
 }
