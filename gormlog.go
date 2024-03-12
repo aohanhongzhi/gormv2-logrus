@@ -130,12 +130,12 @@ func (gl *Gormlog) Trace(ctx context.Context, begin time.Time, fc func() (string
 				if errors.Is(err, gorm.ErrRecordNotFound) {
 					gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Debugf("%s", traceLog)
 				} else {
-					gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Errorf("%s", traceLog)
+					gl.opts.lr.WithContext(ctx).WithFields(logrusFields).Errorf("%s:%s", err.Error(), traceLog)
 				}
 			}
 
 			if gl.opts.logrusEntry != nil {
-				gl.opts.logrusEntry.WithContext(ctx).WithFields(logrusFields).Errorf("%s", traceLog)
+				gl.opts.logrusEntry.WithContext(ctx).WithFields(logrusFields).Errorf("%s:%s", err.Error(), traceLog)
 			}
 
 			return
